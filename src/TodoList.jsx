@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import TodoItem from './TodoItem';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function TodoList() {
   const [tareas, setTareas] = useState([]);
@@ -24,7 +25,7 @@ export default function TodoList() {
   // Obtener datos del usuario
   const fetchUserData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/me', {
+      const response = await fetch(`${API_URL}/api/todos`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -42,7 +43,7 @@ export default function TodoList() {
   // Obtener todas las tareas
   const fetchTareas = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/todos', {
+      const response = await fetch(`${API_URL}/api/todos`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -62,7 +63,7 @@ export default function TodoList() {
     if (!nuevaTarea.trim()) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/todos', {
+      const response = await fetch(`${API_URL}/api/todos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +85,7 @@ export default function TodoList() {
     const tarea = tareas.find(t => t._id === id);
     
     try {
-      const response = await fetch(`http://localhost:5000/api/todos/${id}`, {
+      const response = await fetch(`${API_URL}/api/todos/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -103,7 +104,7 @@ export default function TodoList() {
   // Editar tarea
   const editTarea = async (id, nuevoTexto) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/todos/${id}`, {
+      const response = await fetch(`${API_URL}/api/todos/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -122,7 +123,7 @@ export default function TodoList() {
   // Eliminar tarea
   const deleteTarea = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/todos/${id}`, {
+      await fetch(`${API_URL}/api/todos/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
