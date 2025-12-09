@@ -8,7 +8,6 @@ export default function TodoList() {
   const [tareas, setTareas] = useState([]);
   const [nuevaTarea, setNuevaTarea] = useState('');
   const [loading, setLoading] = useState(true);
-  const [userName, setUserName] = useState('');
   
   const { logout, user } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -16,34 +15,15 @@ export default function TodoList() {
   // Obtener el token
   const token = localStorage.getItem('token');
 
-  // Cargar tareas y datos del usuario al montar el componente
+  // Cargar tareas al montar el componente
   useEffect(() => {
     fetchTareas();
-    fetchUserData();
   }, []);
-
-  // Obtener datos del usuario
-  const fetchUserData = async () => {
-    try {
-      const response = await fetch(`${API_URL}/todos`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setUserName(data.user.name);
-      }
-    } catch (error) {
-      console.error('Error al cargar datos del usuario:', error);
-    }
-  };
 
   // Obtener todas las tareas
   const fetchTareas = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/todos`, {
+      const response = await fetch(`${API_URL}/todos`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -154,9 +134,9 @@ export default function TodoList() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold text-gray-800">Mis Tareas</h1>
-              {userName && (
+              {user && (
                 <p className="text-lg text-gray-600 mt-1">
-                  ¡Hola, <span className="font-semibold text-blue-600">{userName}</span>! 👋
+                  ¡Hola, <span className="font-semibold text-blue-600">{user.name}</span>! 👋
                 </p>
               )}
             </div>
