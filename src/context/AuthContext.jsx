@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export const AuthContext = createContext();
 
@@ -8,17 +8,33 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Verificar si hay un token guardado al cargar la app
     const token = localStorage.getItem('token');
     if (token) {
-      setUser({ token });
+      fetch(`${API_URL}/auth/me`, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setUser(data.user);
+        } else {
+          localStorage.removeItem('token');
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        localStorage.removeItem('token');
+        setLoading(false);
+      });
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   const login = async (email, password) => {
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -28,19 +44,19 @@ export function AuthProvider({ children }) {
       
       if (response.ok) {
         localStorage.setItem('token', data.token);
-        setUser(data);
+        setUser(data.user); // Solo guardas el usuario, no todo
         return { success: true };
       }
       
-      return { success: false, error: data.message || 'Error al iniciar sesión' };
+      return { success: false, error: data?.error || 'Error al iniciar sesión' };
     } catch (error) {
-      return { success: false, error: 'Error de conexión con el servidor' };
+      return { success: false, error: 'Error de conexión' };
     }
   };
 
   const register = async (name, email, password) => {
     try {
-      const response = await fetch(`${API_URL}/api/auth/register`, {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password })
@@ -52,7 +68,7 @@ export function AuthProvider({ children }) {
         return { success: true };
       }
       
-      return { success: false, error: data.message || 'Error al registrarse' };
+      return { success: false, error: data?.message || 'Error al registrarse' };
     } catch (error) {
       return { success: false, error: 'Error de conexión con el servidor' };
     }

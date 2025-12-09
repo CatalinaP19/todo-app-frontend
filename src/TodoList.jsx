@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
 import TodoItem from './TodoItem';
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function TodoList() {
   const [tareas, setTareas] = useState([]);
@@ -25,7 +25,7 @@ export default function TodoList() {
   // Obtener datos del usuario
   const fetchUserData = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/todos`, {
+      const response = await fetch(`${API_URL}/todos`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
