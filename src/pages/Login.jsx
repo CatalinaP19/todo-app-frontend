@@ -1,17 +1,18 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Validar email
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
@@ -23,7 +24,6 @@ function Login() {
     return null;
   };
 
-  // Validar contraseña
   const validatePassword = (password) => {
     if (!password) {
       return 'La contraseña es requerida';
@@ -34,7 +34,6 @@ function Login() {
     return null;
   };
 
-  // Manejar cambios en email
   const handleEmailChange = (e) => {
     const value = e.target.value;
     setEmail(value);
@@ -47,7 +46,6 @@ function Login() {
     }
   };
 
-  // Manejar cambios en contraseña
   const handlePasswordChange = (e) => {
     const value = e.target.value;
     setPassword(value);
@@ -63,7 +61,6 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validar campos
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
 
@@ -74,7 +71,6 @@ function Login() {
 
     setErrors(newErrors);
 
-    // Si hay errores, no enviar
     if (emailError || passwordError) {
       return;
     }
@@ -86,7 +82,6 @@ function Login() {
     if (result.success) {
       navigate('/todos');
     } else {
-      // Errores del servidor
       setErrors(prev => ({ ...prev, server: result.error }));
     }
     
@@ -94,127 +89,122 @@ function Login() {
   };
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      minHeight: '100vh',
-      backgroundColor: '#f5f5f5',
-      padding: '1rem'
-    }}>
-      <div style={{ 
-        backgroundColor: 'white', 
-        padding: '2rem', 
-        borderRadius: '8px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-        width: '100%',
-        maxWidth: '400px'
-      }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Iniciar Sesión</h2>
-        
-        <form onSubmit={handleSubmit}>
-          {/* Campo Email */}
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
-              Email:
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={handleEmailChange}
-              placeholder="ejemplo@correo.com"
-              style={{ 
-                width: '100%', 
-                padding: '0.5rem',
-                border: `1px solid ${errors.email ? '#dc3545' : '#ddd'}`,
-                borderRadius: '4px',
-                outline: 'none'
-              }}
-            />
-            {errors.email && (
-              <p style={{ color: '#dc3545', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-                {errors.email}
-              </p>
-            )}
+    <div className="min-h-screen bg-gradient-to-br from-[#312C51] via-[#4B426D] to-[#2A2540] flex justify-center items-center px-4 py-8">
+      <div className="w-full max-w-md">
+        {/* Card de login */}
+        <div className="bg-white rounded-3xl shadow-2xl p-8 backdrop-blur-sm border border-[#E8DAEF]">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-r from-[#F0D9B5] to-[#F1AAA9] mx-auto mb-4 flex items-center justify-center">
+              <span className="text-2xl">✓</span>
+            </div>
+            <h2 className="text-3xl font-bold text-[#312C51] mb-2">Bienvenido</h2>
+            <p className="text-[#4B426D] text-sm">Inicia sesión en tu cuenta</p>
           </div>
-          
-          {/* Campo Contraseña */}
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
-              Contraseña:
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={handlePasswordChange}
-              placeholder="Ingresa tu contraseña"
-              style={{ 
-                width: '100%', 
-                padding: '0.5rem',
-                border: `1px solid ${errors.password ? '#dc3545' : '#ddd'}`,
-                borderRadius: '4px',
-                outline: 'none'
-              }}
-            />
-            {errors.password && (
-              <p style={{ color: '#dc3545', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-                {errors.password}
-              </p>
-            )}
-          </div>
-          
-          {/* Error del servidor (credenciales inválidas, usuario no existe, etc.) */}
-          {errors.server && (
-            <div style={{ 
-              backgroundColor: '#f8d7da',
-              color: '#721c24',
-              padding: '0.75rem',
-              borderRadius: '4px',
-              marginBottom: '1rem',
-              border: '1px solid #f5c6cb',
-              textAlign: 'center'
-            }}>
-              <strong>⚠ {errors.server}</strong>
-              {errors.server === 'Credenciales inválidas' && (
-                <p style={{ fontSize: '0.875rem', marginTop: '0.25rem', marginBottom: 0 }}>
-                  Verifica tu email y contraseña
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Campo Email */}
+            <div>
+              <label className="block text-sm font-semibold text-[#312C51] mb-2">
+                Email
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={handleEmailChange}
+                placeholder="tu@email.com"
+                className={`w-full px-4 py-3 border-2 rounded-xl transition focus:outline-none focus:ring-2 bg-gradient-to-r from-slate-50 to-blue-50 ${
+                  errors.email 
+                    ? 'border-[#F1AAA9] focus:ring-[#F1AAA9]' 
+                    : 'border-[#E8DAEF] focus:ring-[#F0D9B5]'
+                } text-[#312C51] placeholder-gray-400`}
+              />
+              {errors.email && (
+                <p className="text-[#F1AAA9] text-sm font-medium mt-1 flex items-center gap-1">
+                  <span>⚠</span> {errors.email}
                 </p>
               )}
             </div>
-          )}
-          
-          <button
-            type="submit"
-            disabled={loading}
-            style={{ 
-              width: '100%', 
-              padding: '0.75rem',
-              backgroundColor: loading ? '#6c757d' : '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              fontSize: '1rem',
-              fontWeight: '500'
-            }}
-          >
-            {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-          </button>
-        </form>
-        
-        <div style={{ marginTop: '1rem' }}>
-          <p style={{ textAlign: 'center', color: '#666', marginBottom: '0.5rem' }}>
-            ¿No tienes cuenta?{' '}
-            <Link to="/register" style={{ color: '#007bff', textDecoration: 'none', fontWeight: '500' }}>
-              Regístrate aquí
-            </Link>
-          </p>
-          
-          <p style={{ textAlign: 'center', fontSize: '0.875rem', color: '#999' }}>
-            <Link to="/forgot-password" style={{ color: '#6c757d', textDecoration: 'none' }}>
+
+            {/* Campo Contraseña */}
+            <div>
+              <label className="block text-sm font-semibold text-[#312C51] mb-2">
+                Contraseña
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={handlePasswordChange}
+                  placeholder="••••••••"
+                  className={`w-full px-4 py-3 border-2 rounded-xl transition focus:outline-none focus:ring-2 bg-gradient-to-r from-slate-50 to-blue-50 pr-12 ${
+                    errors.password 
+                      ? 'border-[#F1AAA9] focus:ring-[#F1AAA9]' 
+                      : 'border-[#E8DAEF] focus:ring-[#F0D9B5]'
+                  } text-[#312C51]`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3 text-[#4B426D] hover:text-[#312C51] transition"
+                >
+                  {showPassword ? (
+                    <EyeSlashIcon className="w-5 h-5" />
+                  ) : (
+                    <EyeIcon className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="text-[#F1AAA9] text-sm font-medium mt-1 flex items-center gap-1">
+                  <span>⚠</span> {errors.password}
+                </p>
+              )}
+            </div>
+
+            {/* Error del servidor */}
+            {errors.server && (
+              <div className="bg-gradient-to-r from-[#F1AAA9] to-[#E08B8A] text-white p-4 rounded-xl border-2 border-[#E08B8A] text-center">
+                <p className="font-semibold">⚠ {errors.server}</p>
+                <p className="text-sm mt-1 text-red-100">Verifica tu email y contraseña</p>
+              </div>
+            )}
+
+            {/* Botón Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 bg-gradient-to-r from-[#F0D9B5] to-[#E8C79E] hover:from-[#E8C79E] hover:to-[#DEB887] disabled:from-gray-400 disabled:to-gray-500 text-[#312C51] font-bold rounded-xl transition duration-300 transform hover:scale-105 disabled:hover:scale-100 shadow-lg disabled:shadow-none"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <div className="w-4 h-4 border-2 border-[#312C51] border-t-transparent rounded-full animate-spin"></div>
+                  Iniciando sesión...
+                </span>
+              ) : (
+                'Iniciar Sesión'
+              )}
+            </button>
+          </form>
+
+          {/* Links adicionales */}
+          <div className="mt-8 space-y-3 text-center">
+            <p className="text-[#4B426D] text-sm">
+              ¿No tienes cuenta?{' '}
+              <Link 
+                to="/register" 
+                className="font-bold text-[#F0D9B5] hover:text-[#E8C79E] transition"
+              >
+                Regístrate
+              </Link>
+            </p>
+            <Link 
+              to="/forgot-password" 
+              className="block text-[#4B426D] text-sm hover:text-[#F0D9B5] transition font-medium"
+            >
               ¿Olvidaste tu contraseña?
             </Link>
-          </p>
+          </div>
         </div>
       </div>
     </div>
