@@ -43,7 +43,7 @@ export default function TodoList() {
     if (!nuevaTarea.trim()) return;
 
     try {
-      const response = await fetch(`${API_URL}/api/todos`, {
+      const response = await fetch(`${API_URL}/todos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ export default function TodoList() {
     const tarea = tareas.find(t => t._id === id);
     
     try {
-      const response = await fetch(`${API_URL}/api/todos/${id}`, {
+      const response = await fetch(`${API_URL}/todos/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ export default function TodoList() {
   // Editar tarea
   const editTarea = async (id, nuevoTexto) => {
     try {
-      const response = await fetch(`${API_URL}/api/todos/${id}`, {
+      const response = await fetch(`${API_URL}/todos/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -103,7 +103,7 @@ export default function TodoList() {
   // Eliminar tarea
   const deleteTarea = async (id) => {
     try {
-      await fetch(`${API_URL}/api/todos/${id}`, {
+      await fetch(`${API_URL}/todos/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
