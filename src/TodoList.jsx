@@ -5,6 +5,7 @@ import { ToastContext } from './context/ToastContext';
 import { ThemeContext } from './context/ThemeContext';
 import TodoItem from './TodoItem';
 import { MagnifyingGlassIcon, MoonIcon, SunIcon } from "@heroicons/react/24/solid";
+import Confetti from 'react-confetti';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -14,6 +15,7 @@ export default function TodoList() {
   const [busqueda, setBusqueda] = useState('');
   const [loading, setLoading] = useState(true);
   const [animateIn, setAnimateIn] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
   
   const { logout, user } = useContext(AuthContext);
   const { addToast } = useContext(ToastContext);
@@ -97,6 +99,8 @@ export default function TodoList() {
       
       if (!tarea.completed) {
         addToast('✅ ¡Tarea completada! ¡Felicitaciones!', 'success', 3000);
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 4000); // Ocultar confeti después de 4 segundos
       } else {
         addToast('↩️ Tarea marcada como pendiente', 'info', 3000);
       }
@@ -185,6 +189,12 @@ export default function TodoList() {
 
   return (
     <>
+      {showConfetti && (
+        <Confetti
+          recycle={false}
+          numberOfPieces={400}
+        />
+      )}
       <style>{`
         @keyframes slideInDown {
           from {
@@ -557,4 +567,3 @@ export default function TodoList() {
     </>
   );
 }
-
