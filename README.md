@@ -69,5 +69,23 @@ Consulta el archivo `.env.example` incluido en la raíz del proyecto para un eje
 - `ARCHITECTURA.md` — Diagrama y descripción de arquitectura.
 - `API.md` — Documentación de los endpoints que consume el frontend.
 
+## Previsualizar API (Swagger UI estático)
+
+He incluido una previsualización estática de Swagger UI en el repositorio. Abre el archivo:
+
+- [swagger-ui/index.html](swagger-ui/index.html)
+
+La página consume `openapi.yaml` en la raíz del repositorio. Para ver la UI en el navegador en local (evita problemas de CORS), sirve los archivos estáticos con un servidor simple. Ejemplos:
+
+```bash
+# usar `serve` (recomendado):
+npx serve -s .
+
+# o usar `http-server`:
+npx http-server -c-1 .
+```
+
+Luego abre en el navegador `http://localhost:3000/swagger-ui/index.html` (o el puerto que muestre la herramienta `serve`).
+
 ## Licencia
 Proyecto licenciado a nombre de Catalina Perez Losada. Ver `LICENSE`.

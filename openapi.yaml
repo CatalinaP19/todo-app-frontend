@@ -1,0 +1,211 @@
+openapi: 3.0.3
+info:
+  title: Todo App API
+  version: '1.0.0'
+  description: API utilizada por el frontend Todo App
+servers:
+  - url: http://localhost:3000
+    description: Desarrollo
+paths:
+  /auth/register:
+    post:
+      summary: Registrar usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Usuario registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Bad Request
+  /auth/login:
+    post:
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Unauthorized
+  /todos:
+    get:
+      summary: Obtener todas las tareas del usuario
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de tareas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Todo'
+        '401':
+          description: Unauthorized
+    post:
+      summary: Crear una nueva tarea
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTodoRequest'
+      responses:
+        '201':
+          description: Tarea creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '400':
+          description: Bad Request
+  /todos/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    put:
+      summary: Actualizar una tarea
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTodoRequest'
+      responses:
+        '200':
+          description: Tarea actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+    delete:
+      summary: Eliminar una tarea
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Eliminado
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    RegisterRequest:
+      type: object
+      required: [name, email, password]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      example:
+        name: Catalina Perez
+        email: catalina@example.com
+        password: secret
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      example:
+        email: catalina@example.com
+        password: secret
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            email:
+              type: string
+        token:
+          type: string
+      example:
+        user:
+          id: "123"
+          name: "Catalina Perez"
+          email: "catalina@example.com"
+        token: "<jwt-token>"
+    Todo:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        completed:
+          type: boolean
+        userId:
+          type: string
+      example:
+        id: "t1"
+        title: "Comprar leche"
+        completed: false
+        userId: "123"
+    CreateTodoRequest:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        completed:
+          type: boolean
+      example:
+        title: "Nueva tarea"
+        completed: false
+    UpdateTodoRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        completed:
+          type: boolean
+      example:
+        title: "Tarea actualizada"
+        completed: true
